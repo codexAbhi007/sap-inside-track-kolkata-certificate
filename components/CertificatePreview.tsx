@@ -1,9 +1,33 @@
 "use client";
 import { useEffect, useState } from "react";
 
+const ButtonSpinner = () => (
+  <svg
+    className="animate-spin h-5 w-5 text-amber-950"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle
+      className="opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      strokeWidth="4"
+    />
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+    />
+  </svg>
+);
+
 export default function CertificatePreview({ participant }: any) {
   const [pdfSrc, setPdfSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     async function generatePdf() {
@@ -23,32 +47,59 @@ export default function CertificatePreview({ participant }: any) {
     generatePdf();
   }, [participant]);
 
+  const handleDownload = () => {
+    if (!pdfSrc) return;
+
+    setDownloading(true);
+
+    const link = document.createElement("a");
+    link.href = pdfSrc;
+    link.download = `${participant.Name}_certificate.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Re-enable button after short delay (browser-safe)
+    setTimeout(() => {
+      setDownloading(false);
+    }, 1500);
+  };
+
   return (
     <div className="w-full flex flex-col items-center gap-6 mb-8">
-      
-      {/* 🔄 LOADER IN PLACE OF PREVIEW */}
+
+      {/* 🔄 PREVIEW LOADER */}
       {loading && (
-        <div className="w-full flex justify-center items-center py-16">
+        <div className="w-full flex justify-center py-16">
           <div className="loader"></div>
         </div>
       )}
 
-      {/* ✅ AFTER LOADING */}
+      {/* ⬇️ DOWNLOAD BUTTON */}
       {!loading && pdfSrc && (
-        <>
-          {/* (Preview intentionally removed as per your design) */}
-
-          {/* Download Button */}
-          <a
-            href={pdfSrc}
-            download={`${participant.Name}_certificate.pdf`}
-            className="mt-2 max-w-sm bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600
-                       text-amber-950 font-bold px-6 py-3 rounded-xl shadow-lg
-                       hover:from-yellow-500 hover:to-yellow-700 transition text-center"
-          >
-            Download Certificate
-          </a>
-        </>
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className={`mt-2 max-w-sm flex items-center justify-center gap-2
+            bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600
+            text-amber-950 font-bold px-6 py-3 rounded-xl shadow-lg
+            transition
+            ${
+              downloading
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:from-yellow-500 hover:to-yellow-700"
+            }
+          `}
+        >
+          {downloading ? (
+            <>
+              <ButtonSpinner />
+              Downloading…
+            </>
+          ) : (
+            "Download Certificate"
+          )}
+        </button>
       )}
     </div>
   );
