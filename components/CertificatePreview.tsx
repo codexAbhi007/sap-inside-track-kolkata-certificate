@@ -34,13 +34,7 @@ export default function CertificatePreview({ participant }: any) {
       {!loading && pdfSrc && (
         <>
           {/* Certificate Preview */}
-          <div className="w-full max-w-xl">
-            <img
-              src="/cert-template.png"
-              alt="Certificate Preview"
-              className="w-75 h-auto border rounded-lg shadow-md mx-auto"
-            />
-          </div>
+          
 
           {/* Download Button */}
           

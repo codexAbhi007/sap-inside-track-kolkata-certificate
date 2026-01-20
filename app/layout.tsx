@@ -1,5 +1,15 @@
 import "./globals.css";
 import localFont from "next/font/local";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SAP Inside Track Kolkata 2026",
+  description:
+    "Download your SAP Inside Track Kolkata participation certificate",
+  icons: {
+    icon: "icon.png",
+  },
+};
 
 const benguiat = localFont({
   src: "../fonts/ITCBenguiatCondensedMedium.otf",

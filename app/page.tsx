@@ -13,11 +13,11 @@ export default function Home() {
       <div className="fixed inset-0 -z-10 bg-gradient-radial"></div>
 
       {/* HEADER */}
-      <header className="w-full p-5 backdrop-blur-lg bg-white/60 shadow-sm border-b border-white/60 flex justify-center">
+      <header className="w-full p-5 backdrop-blur-lg bg-white/60 shadow-sm border-b border-white/60 flex justify-center ">
         <img
           src="/sap-logo.png"
           alt="SAP Inside Track Kolkata"
-          className="h-20 sm:h-24"
+          className="h-20 sm:h-24 "
         />
       </header>
 
