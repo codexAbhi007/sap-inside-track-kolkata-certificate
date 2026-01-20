@@ -1,33 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
-const ButtonSpinner = () => (
-  <svg
-    className="animate-spin h-5 w-5 text-amber-950"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <circle
-      className="opacity-25"
-      cx="12"
-      cy="12"
-      r="10"
-      stroke="currentColor"
-      strokeWidth="4"
-    />
-    <path
-      className="opacity-75"
-      fill="currentColor"
-      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-    />
-  </svg>
-);
-
 export default function CertificatePreview({ participant }: any) {
-  const [pdfSrc, setPdfSrc] = useState<string | null>(null);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     async function generatePdf() {
@@ -40,66 +17,56 @@ export default function CertificatePreview({ participant }: any) {
       });
 
       const { base64 } = await res.json();
-      setPdfSrc(`data:application/pdf;base64,${base64}`);
+
+      // ✅ Convert base64 → Blob → Object URL
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length)
+        .fill(0)
+        .map((_, i) => byteCharacters.charCodeAt(i));
+      const byteArray = new Uint8Array(byteNumbers);
+
+      const blob = new Blob([byteArray], { type: "application/pdf" });
+      const blobUrl = URL.createObjectURL(blob);
+
+      setPdfBlobUrl(blobUrl);
       setLoading(false);
     }
 
     generatePdf();
+
+    return () => {
+      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    };
   }, [participant]);
 
-  const handleDownload = () => {
-    if (!pdfSrc) return;
-
-    setDownloading(true);
-
-    const link = document.createElement("a");
-    link.href = pdfSrc;
-    link.download = `${participant.Name}_certificate.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Re-enable button after short delay (browser-safe)
-    setTimeout(() => {
-      setDownloading(false);
-    }, 1500);
-  };
-
   return (
-    <div className="w-full flex flex-col items-center gap-6 mb-8">
-
-      {/* 🔄 PREVIEW LOADER */}
+    <div className="w-full flex flex-col items-center gap-4 mb-8">
+      {/* LOADER */}
       {loading && (
-        <div className="w-full flex justify-center py-16">
-          <div className="loader"></div>
+        <div className="flex flex-col items-center gap-3 py-10">
+          <div className="w-10 h-10 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin" />
+          <p className="text-amber-950 text-sm">
+            Generating certificate…
+          </p>
         </div>
       )}
 
-      {/* ⬇️ DOWNLOAD BUTTON */}
-      {!loading && pdfSrc && (
-        <button
-          onClick={handleDownload}
-          disabled={downloading}
-          className={`mt-2 max-w-sm flex items-center justify-center gap-2
-            bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600
-            text-amber-950 font-bold px-6 py-3 rounded-xl shadow-lg
-            transition
-            ${
-              downloading
-                ? "opacity-70 cursor-not-allowed"
-                : "hover:from-yellow-500 hover:to-yellow-700"
-            }
-          `}
-        >
-          {downloading ? (
-            <>
-              <ButtonSpinner />
-              Downloading…
-            </>
-          ) : (
-            "Download Certificate"
-          )}
-        </button>
+      {/* DOWNLOAD BUTTON (REAL LINK) */}
+      {!loading && pdfBlobUrl && (
+        <>
+          <a
+            href={pdfBlobUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 max-w-sm px-6 py-3 rounded-xl font-bold text-amber-950
+              shadow-lg transition-all text-center
+              bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600
+              hover:from-yellow-500 hover:to-yellow-700"
+          >
+            Download Certificate
+          </a>
+
+        </>
       )}
     </div>
   );
