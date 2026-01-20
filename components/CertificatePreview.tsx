@@ -26,7 +26,7 @@ export default function CertificatePreview({ participant }: any) {
   return (
     <div className="w-full flex flex-col items-center gap-4 mb-8">
       {loading && (
-        <p className="text-center text-white text-lg py-10">
+        <p className="text-center text-amber-950 text-lg py-10">
           Generating certificate preview...
         </p>
       )}
@@ -43,10 +43,11 @@ export default function CertificatePreview({ participant }: any) {
           </div>
 
           {/* Download Button */}
-          <a
+          
+           <a
             href={pdfSrc}
             download={`${participant.Name}_certificate.pdf`}
-            className="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2 rounded-lg text-center transition"
+            className="mt-2  max-w-sm bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 text-amber-950 font-bold px-6 py-3 rounded-xl shadow-lg hover:from-yellow-500 hover:to-yellow-700 transition text-center"
           >
             Download Certificate
           </a>

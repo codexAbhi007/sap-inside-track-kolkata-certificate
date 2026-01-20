@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import CertificatePreview from "../components/CertificatePreview";
@@ -7,20 +8,43 @@ export default function Home() {
   const [participant, setParticipant] = useState<any>(null);
 
   return (
-    <main className="flex flex-col items-center gap-8 py-10">
-      <img src="/sap-logo.png" className="h-24" alt="SAP Logo" />
+    <div className="relative min-h-screen flex flex-col items-center bg-transparent overflow-x-hidden">
+      {/* BACKGROUND GRADIENT */}
+      <div className="fixed inset-0 -z-10 bg-gradient-radial"></div>
 
-      <h1 className="text-4xl font-bold text-white text-center">
-        SAP Inside Track Kolkata Participation Certificate 
-      </h1>
+      {/* HEADER */}
+      <header className="w-full p-5 backdrop-blur-lg bg-white/60 shadow-sm border-b border-white/60 flex justify-center">
+        <img
+          src="/sap-logo.png"
+          alt="SAP Inside Track Kolkata"
+          className="h-20 sm:h-24"
+        />
+      </header>
 
-      <SearchBar onSelect={setParticipant} />
+      {/* MAIN CARD */}
+      <main className="mt-10 w-full flex justify-center">
+        <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 w-[min(90%,420px)] text-center shadow-xl">
+          <h1 className="text-3xl font-playfair font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 drop-shadow-lg">
+            Certificate Portal
+          </h1>
 
+          <p className="text-gray-600 text-sm mt-2 mb-6">
+            SAP Inside Track Kolkata 2026
+            <br />
+            Mini Session 01
+          </p>
+
+          {/* Tailwind SearchBar Input */}
+          <SearchBar onSelect={setParticipant} />
+        </div>
+      </main>
+
+      {/* Show preview only after selection */}
       {participant && (
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center mt-6">
           <CertificatePreview participant={participant} />
         </div>
       )}
-    </main>
+    </div>
   );
 }
